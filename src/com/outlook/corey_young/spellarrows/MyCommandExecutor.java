@@ -7,10 +7,11 @@ import org.bukkit.entity.Player;
 
 public class MyCommandExecutor implements CommandExecutor {
 
+	SpellArrows plugin;
+
 	public MyCommandExecutor(SpellArrows plugin) {
 		this.plugin = plugin;
 	}
-	SpellArrows plugin;
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

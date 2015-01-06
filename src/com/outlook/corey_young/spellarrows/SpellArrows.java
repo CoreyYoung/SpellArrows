@@ -5,14 +5,15 @@ import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.Potion;
 
 public final class SpellArrows extends JavaPlugin {
 
 	//HashMaps for storing shot arrow's potion effects and player settings.
-	public static HashMap<Integer, Short> arrowMap = new HashMap<>();
+	public static HashMap<Integer, Potion> arrowMap = new HashMap<>();
 	public static HashMap<String, Boolean> sortArrowMap = new HashMap<>();
 	public static Boolean arrowDamage = false;
 
@@ -23,7 +24,7 @@ public final class SpellArrows extends JavaPlugin {
 		getCommand("sortarrows").setExecutor(commandExecutor);
 		getCommand("spellarrows").setExecutor(commandExecutor);
 		loadConfiguration();
-		createMagicArrows();
+		createMagicArrowRecipes();
 	}
 
 	@Override
@@ -32,6 +33,9 @@ public final class SpellArrows extends JavaPlugin {
 		saveConfiguration();
 	}
 
+	/**
+	 * Loads settings from the config file.
+	 */
 	public void loadConfiguration() {
 		reloadConfig();
 
@@ -55,9 +59,11 @@ public final class SpellArrows extends JavaPlugin {
 		}
 	}
 
+	/**
+	 * Saves the HashMap sortArrowMap to the config.
+	 * The other HashMaps don't need to be saved, as they haven't changed since being loaded.
+	 */
 	public void saveConfiguration() {
-		//Save sortArrowMap to config.yml
-		//The other HashMaps don't need to be saved, as they havn't changed since being loaded.
 		for (String playerName : sortArrowMap.keySet()) {
 			getConfig().set("sortArrows." + playerName, sortArrowMap.get(playerName));
 		}
@@ -65,7 +71,12 @@ public final class SpellArrows extends JavaPlugin {
 		saveConfig();
 	}
 
-	public void createMagicArrows() {
+	/**
+	 * Creates a recipe for magic arrows.
+	 * Ingredients include any potion and and an arrow.
+	 * The recipe result is named "Magic Arrow", and is renamed properly in MyListener.onCraftItem.
+	 */
+	public void createMagicArrowRecipes() {
 		ItemStack arrowStack = new ItemStack(Material.ARROW);
 		ItemMeta itemMeta = arrowStack.getItemMeta();
 		itemMeta.setDisplayName("Magic Arrow");
@@ -75,9 +86,10 @@ public final class SpellArrows extends JavaPlugin {
 
 		arrowStack.setItemMeta(itemMeta);
 
-		ShapelessRecipe recipe = new ShapelessRecipe(arrowStack);
-		recipe.addIngredient(Material.ARROW);
-		recipe.addIngredient(potionStack.getData());
+		ShapedRecipe recipe = new ShapedRecipe(arrowStack);
+		recipe.shape("P", "A");
+		recipe.setIngredient('P', potionStack.getData());
+		recipe.setIngredient('A', Material.ARROW);
 
 		getServer().addRecipe(recipe);
 	}

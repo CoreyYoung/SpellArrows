@@ -28,7 +28,7 @@ public class MyListener implements Listener {
 	 * @param event A PrepareItemCraftEvent.
 	 */
 	@EventHandler
-	public void onCraftItem(PrepareItemCraftEvent event) {
+	public void prepareCraftItem(PrepareItemCraftEvent event) {
 		ItemMeta itemMeta = event.getRecipe().getResult().getItemMeta();
 
 		if (itemMeta.hasDisplayName()) {
@@ -166,7 +166,6 @@ public class MyListener implements Listener {
 	public ItemStack createPotionArrow(Potion potion) {
 		ItemStack result = new ItemStack(Material.ARROW);
 		ItemMeta resultMeta = result.getItemMeta();
-		System.out.println(potion.getEffects());
 
 		String effectName = potion.getType().name();
 
@@ -212,7 +211,8 @@ public class MyListener implements Listener {
 		boolean extended = false;
 		int level = 1;
 
-		if (name.contains("Arrow of ")) {
+		// If name is null, the second expression is short-circuited.
+		if (name != null && name.contains("Arrow of ")) {
 			name = removeSubstring(name, "Arrow of ");
 
 			if (name.contains(" (Extended)")) {
@@ -225,6 +225,7 @@ public class MyListener implements Listener {
 				level = 2;
 			}
 
+			name = name.replace(' ', '_');
 			name = name.toUpperCase();
 			PotionType potionType = PotionType.valueOf(name);
 			Potion potion = new Potion(potionType);

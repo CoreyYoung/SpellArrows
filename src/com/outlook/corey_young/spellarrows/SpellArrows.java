@@ -74,7 +74,7 @@ public final class SpellArrows extends JavaPlugin {
 	/**
 	 * Creates a recipe for magic arrows.
 	 * Ingredients include any potion and and an arrow.
-	 * The recipe result is named "Magic Arrow", and is renamed properly in MyListener.onCraftItem.
+	 * The recipe result is named "Magic Arrow", and is renamed properly in MyListener.prepareCraftItem.
 	 */
 	public void createMagicArrowRecipes() {
 		ItemStack arrowStack = new ItemStack(Material.ARROW);

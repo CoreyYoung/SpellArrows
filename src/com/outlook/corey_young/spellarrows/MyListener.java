@@ -25,6 +25,7 @@ public class MyListener implements Listener {
 
 	/**
 	 * Renames magic arrows according to the ingredient potion's type.
+	 *
 	 * @param event A PrepareItemCraftEvent.
 	 */
 	@EventHandler
@@ -38,11 +39,25 @@ public class MyListener implements Listener {
 
 				for (ItemStack itemStack : contents) {
 					if (itemStack.getType().equals(Material.POTION)) {
-						Potion potion = Potion.fromItemStack(itemStack);
-						ItemStack result = createPotionArrow(potion);
-						inventory.setResult(result);
+						// Disable crafting if potion is WATER
+						if (itemStack.isSimilar(new ItemStack(Material.POTION))) {
+							inventory.setResult(null);
+							return;
+						}
 
-						return;
+						// Calling Potion.fromItemStack(IS), where <IS> is a stack
+						// of level 1 instant potions, throws an exception.
+						// This code disables craft potions, rather then throw an exception.
+						try {
+							Potion potion = Potion.fromItemStack(itemStack);
+							ItemStack result = createPotionArrow(potion);
+							inventory.setResult(result);
+						} catch (Exception exception) {
+							Player player = (Player) event.getView().getPlayer();
+							player.sendMessage("You can't make a spell arrow with that potion.");
+							inventory.setResult(null);
+							return;
+						}
 					}
 				}
 			}
@@ -50,7 +65,9 @@ public class MyListener implements Listener {
 	}
 
 	/**
-	 * Shuffles arrow ItemStacks in a player's inventory on left click, if they have arrowsorting enabled.
+	 * Shuffles arrow ItemStacks in a player's inventory on left click, if they
+	 * have arrowsorting enabled.
+	 *
 	 * @param event A PlayerInteractEvent.
 	 */
 	@EventHandler
@@ -94,6 +111,7 @@ public class MyListener implements Listener {
 
 	/**
 	 * Gets a magic arrow's potion and saves it to SpellArrows.arrowMap.
+	 *
 	 * @param event An EntityShootBowEvent.
 	 */
 	@EventHandler
@@ -116,7 +134,9 @@ public class MyListener implements Listener {
 	}
 
 	/**
-	 * Applies a potion effect to a mob if hit by an arrow in SpellArrows.arrowMap.
+	 * Applies a potion effect to a mob if hit by an arrow in
+	 * SpellArrows.arrowMap.
+	 *
 	 * @param event An EntityDamageByEntityEvent.
 	 */
 	@EventHandler
@@ -141,6 +161,7 @@ public class MyListener implements Listener {
 
 	/**
 	 * Makes an arrow back into a magic arrow if found in SpellArrows.arrowMap.
+	 *
 	 * @param event A PlayerPickupItemEvent.
 	 */
 	@EventHandler
@@ -160,6 +181,7 @@ public class MyListener implements Listener {
 
 	/**
 	 * Creates an arrow with the given potion's data in the name.
+	 *
 	 * @param potion The potion used to name the arrow.
 	 * @return An arrow with potion data in the name.
 	 */
@@ -176,7 +198,9 @@ public class MyListener implements Listener {
 			effectName += " (Extended)";
 		}
 
-		if (potion.getLevel() != 1) {
+		//potion.getLevel() seems to return 2 for potions with a max level of 1.
+		//This is a workaround.
+		if (potion.getLevel() == 2 && potion.getType().getMaxLevel() > 1) {
 			effectName += " " + potion.getLevel();
 		}
 
@@ -188,6 +212,7 @@ public class MyListener implements Listener {
 
 	/**
 	 * Removes a substring from a string.
+	 *
 	 * @param string The main string.
 	 * @param substring The substring to remove from the main string.
 	 * @return The main string with the substring removed.
@@ -203,6 +228,7 @@ public class MyListener implements Listener {
 
 	/**
 	 * Creates a Potion from data stored in a magic arrow's name.
+	 *
 	 * @param itemStack An ItemStack that contains magic arrows.
 	 * @return The potion just created. Null if invalid data in name.
 	 */
@@ -231,7 +257,10 @@ public class MyListener implements Listener {
 			Potion potion = new Potion(potionType);
 
 			potion.setLevel(level);
-			potion.setHasExtendedDuration(extended);
+
+			if (!potionType.isInstant()) {
+				potion.setHasExtendedDuration(extended);
+			}
 
 			return potion;
 		}
@@ -241,6 +270,7 @@ public class MyListener implements Listener {
 
 	/**
 	 * Gets the number of arrow ItemStacks in an inventory.
+	 *
 	 * @param inventory The inventory to search for arrow ItemStacks.
 	 * @return The number of arrow ItemStacks found.
 	 */
@@ -260,6 +290,7 @@ public class MyListener implements Listener {
 
 	/**
 	 * Gets an array of all arrow ItemStacks in an inventory.
+	 *
 	 * @param inventory The inventory to search for arrow ItemStacks.
 	 * @return An array of all arrow ItemStacks found.
 	 */
@@ -285,7 +316,9 @@ public class MyListener implements Listener {
 	}
 
 	/**
-	 * Gets an array with the indice of every arrow ItemStack for a given inventory.
+	 * Gets an array with the indice of every arrow ItemStack for a given
+	 * inventory.
+	 *
 	 * @param inventory The inventory to search for arrow ItemStacks.
 	 * @return An array of all arrow ItemStacks.
 	 */

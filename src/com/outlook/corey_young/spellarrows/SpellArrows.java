@@ -60,8 +60,8 @@ public final class SpellArrows extends JavaPlugin {
 	}
 
 	/**
-	 * Saves the HashMap sortArrowMap to the config.
-	 * The other HashMaps don't need to be saved, as they haven't changed since being loaded.
+	 * Saves the HashMap sortArrowMap to the config. The other HashMaps don't
+	 * need to be saved, as they haven't changed since being loaded.
 	 */
 	public void saveConfiguration() {
 		for (String playerName : sortArrowMap.keySet()) {
@@ -72,9 +72,9 @@ public final class SpellArrows extends JavaPlugin {
 	}
 
 	/**
-	 * Creates a recipe for magic arrows.
-	 * Ingredients include any potion and and an arrow.
-	 * The recipe result is named "Magic Arrow", and is renamed properly in MyListener.prepareCraftItem.
+	 * Creates a recipe for magic arrows. Ingredients include any potion and and
+	 * an arrow. The recipe result is named "Magic Arrow", and is renamed
+	 * properly in MyListener.prepareCraftItem.
 	 */
 	public void createMagicArrowRecipes() {
 		ItemStack arrowStack = new ItemStack(Material.ARROW);
